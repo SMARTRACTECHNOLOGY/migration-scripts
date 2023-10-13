@@ -60,7 +60,6 @@ let tenantArray = [
             "P5R4Y6hAChd6q": "e5c33c87-32da-43fa-af39-517e32919f56",
             "6utptZax6saw2": "b32c7136-46c9-4590-8dd2-60bd3589729f",
             "TeCN9hF5zK8QE": "56d335df-8b85-491f-87cd-8e977789f15d",
-
         }
     },
 ]
@@ -121,8 +120,6 @@ mongoDb.once('open', async function () {
             let tenantId = Object.keys(tenantData.tenantData)
 
             let enablementData = await mongoDb.collection("authen").find({ "authentify.tenantId": { $eq: tenantId[0] } },).toArray();
-            // replace this elastic search query .......
-
 
             // Product Logic
             let enableBulk = []

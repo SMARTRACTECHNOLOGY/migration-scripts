@@ -33,7 +33,7 @@ db.once('open', function () {
                         "must": [
                             {
                                 "term": {
-                                    "tenantId": "86904681-eaa5-4b9e-aa49-6b6c4959481c/"
+                                    "tenantId": "86904681-eaa5-4b9e-aa49-6b6c4959481c"
                                 }
                             },
                             {

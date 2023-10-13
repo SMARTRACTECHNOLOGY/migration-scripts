@@ -1,11 +1,3 @@
-    // let url = 'mongodb://diUser:6A200sj9ZlHjuXZHtIo2@sc-prod-new-di-database.cluster-ckpzwf1jxpvt.eu-west-1.docdb.amazonaws.com:27017/digital-identity?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false'
-    // try {
-    //     var oldProd = mongoose2.createConnection(url, { tlsCAFile: `rds-combined-ca-bundle.pem` });
-    //     await oldProd.openUri(url);
-
-
-
-    //     const mongoose = require("mongoose");
 
 console.log("Started the Script>>>>>>>>>>>>>>>>>>");
 
