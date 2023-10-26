@@ -18,48 +18,48 @@ mongoDb.on('error', console.error.bind(console, 'connection error:'));
 let tenantArray = [
     {
         tenantData: {
-            '86904681-eaa5-4b9e-aa49-6b6c4959481c': 'c2107b22-b02e-45a7-b126-89b65b054ef6'
+            '86904681-eaa5-4b9e-aa49-6b6c4959481c': '682c8014-8506-4610-92cc-8388a4c4ae94'
         },
         process: {
             '4f9cd098-fc27-4736-b23f-971c3bff75ff': {
-                id:'770e12ca-966f-4a9c-89ed-8caee952160d',
+                id:'85f79437-7b7d-4f2c-bd7c-efe9adc8160a',
                 input:['']
             },
             '9692f4e0-0837-434a-a7df-3eb212c791ea':{
-                id:'22174a41-fa5d-4b83-b861-c915c4c50f6f',
+                id:'aa6e75c1-4336-44b9-903b-93f3307d42d8',
                 input:['']
             },
             "7830bc05-ac7d-453a-9ee3-965b604f78af":{
-                id:'e36749a4-f7b9-467e-8d4e-c323e2df9e89',
+                id:'13086670-9f57-445b-a324-94abec5f2783',
                 input:['']
             }
         },
         userId: {
             '3cf7ea6f-8245-4f6c-87f2-43ea28b372b8': {
-                username: 'Fran',
-                id: "6e06c1e5-b425-40f4-b6e3-a9cecec804ef"
+                username: 'ishika321',
+                id: "7b32c739-3a6a-49b2-ae82-71fced6d9c6c"
             }
         },
         siteData: {
             '1bfd5bf6-f15e-430e-9652-3bd13fa97a73': {
-                siteId: '07854415-aeab-478c-9edd-7f7e44744fb5',
-                zoneId: '8521524f-80f3-4299-8aa5-3b3e95f832e0',
+                siteId: '44c0e41d-5313-451b-a195-0bc60f480598',
+                zoneId: '39e71d1b-a0da-432f-aa54-0154e1b91586',
 
-                siteName: 'AUTHENTIFY STILLWATER MINNESOTA LAB',
-                zoneName: 'AUTHENTIFY STILLWATER MINNESOTA LAB_DEFAULT'
+                siteName: 'site1',
+                zoneName: 'zone1'
             },
         },
-        deviceId: 'b5b32b82-5da0-41c7-9488-414c8e06a711',
-        deviceName: "Denso Device",
+        deviceId: 'bc0392c7-8aaa-4d0c-8184-ffaa40a32f48',
+        deviceName: "denso walkthrough",
         product: {
-            'Q3DzyjDArkF9Z': "757ea445-4d0e-4292-9151-c02378acc930",
-            "sxcJcne6K6vE7": "23756d95-9fc2-4191-8f42-81e4609cfc14",
-            "sjNNWiGRvPyCJ": "c81e477e-5469-4dc7-beba-e612a72c6ada",
-            "hxdXRpf7AKdzg": "313c23d2-bac9-44e9-8c7b-f1ddbec2c4c1",
-            "ckGS7bmBZTa7r": "c39408c8-ac73-4b54-a1cc-f7488eec82cf",
-            "P5R4Y6hAChd6q": "e5c33c87-32da-43fa-af39-517e32919f56",
-            "6utptZax6saw2": "b32c7136-46c9-4590-8dd2-60bd3589729f",
-            "TeCN9hF5zK8QE": "56d335df-8b85-491f-87cd-8e977789f15d",
+            'Q3DzyjDArkF9Z': "c4b14895-3acd-4227-91e6-2c7b8bab0456",
+            "sxcJcne6K6vE7": "6da4c6b7-ef12-456d-9094-78005d494b90",
+            "sjNNWiGRvPyCJ": "5e3706c7-b3ef-4eb7-abd1-9b12d8d17507",
+            "hxdXRpf7AKdzg":"b2db523e-d97b-4f70-8856-e09234015ee6",
+            "ckGS7bmBZTa7r": "b4605081-2e14-41c5-913d-776163a0aced",
+            "P5R4Y6hAChd6q": "a9100816-4229-496b-9378-987e0512faf8",
+            "6utptZax6saw2": "7c3cfce0-1bd2-4ef8-8645-e0477fc4a15a",
+            "TeCN9hF5zK8QE": "6d213aa3-baa8-44ca-9868-78d21064f54b",
         }
     },
 ]
@@ -119,7 +119,7 @@ mongoDb.once('open', async function () {
         try {
             let tenantId = Object.keys(tenantData.tenantData)
 
-            let enablementData = await mongoDb.collection("authen").find({ "authentify.tenantId": { $eq: tenantId[0] } },).toArray();
+            let enablementData = await mongoDb.collection("authentifyMigration").find({ "authentify.tenantId": { $eq: tenantId[0] } },).toArray();
 
             // Product Logic
             let enableBulk = []
@@ -159,28 +159,56 @@ mongoDb.once('open', async function () {
                 else{
                     product = enbleData.authentify.metadata?.product?.barcode
                 }
-                let barcode ={}
-                let qrcode ={}
-                if (enbleData.authentify.barcode.length>0) {
-                    barcode = {
-                        code: enbleData.authentify.barcode[0],
-                        type: 'barcode'
-                    }
+                let barcode =[]
+                let qrcode =[]
+                let uhf = []
+                if (enbleData.authentify.metadata.barcode.length>0) {
+                    enbleData.authentify.metadata.barcode.map((i)=>{
+                        barcode.push({
+                                code: i.code,
+                                type: 'barcode',
+                                metaInfo: i
+                            })  
+                    })
                 }
                 else {
                     barcode = null
                 }
-                if (enbleData.authentify.qr.length > 0) {
-
-                    qrcode = {
-                        code: enbleData.authentify.metadata?.qrcode[0],
-                        type: 'qrcode'
-                    }
+                if (enbleData.authentify.metadata.qrcode.length > 0) {
+                    enbleData.authentify.metadata.qrcode.map((i)=>{
+                        qrcode.push({
+                                code: i.code,
+                                type: 'qrcode',
+                                metaInfo:i
+                            })  
+                    })
                 }
-                else {
+                else{
                     qrcode = null
                 }
-
+                if (enbleData.authentify.metadata.uhf.length > 0) {
+                    enbleData.authentify.metadata.uhf.map((i)=>{
+                        uhf.push({
+                                code: i.epc,
+                                type: 'uhf',
+                                metaInfo: i
+                            })  
+                    })
+                }
+                else {
+                    uhf = null
+                }
+                if(enbleData.authentify.metadata.input.length > 0) {
+                    enbleData.authentify.metadata.input.map((i)=>{
+                        inputData.push({
+                              key: i.key,
+                              value: i.value
+                            })  
+                    })
+                }
+                else {
+                    inputData = []
+                }
                 //Primary URL>>>>>>>>>>>..
                 // console.log('barcode',barcode)
                 if (enbleData.authentify.nfc.length > 0) {
@@ -223,18 +251,7 @@ mongoDb.once('open', async function () {
                     if(processData === enbleData.authentify.processId){
                         console.log("processData>>>>",enbleData.authentify.processId,processData)
                         newprocessId = tenantData.process[processData].id
-                        // inname = tenantData.process[processData]?.input[0]      
-                        // let data = {"key":inname ,"value":enbleData.authentify?.barcode[0]}
-                        // inputData.push(data)  
-                    }       
-            
-                        // let i =0 
-                        // for(let inp in enbleData.authentify?.barcode){
-                        //     console.log(inp)
-                        //     
-                       
-                        //     i=i+1
-                        // }
+                    }
                       
                 })
                 Object.keys(tenantData.product).filter(productUpc => {
@@ -246,6 +263,14 @@ mongoDb.once('open', async function () {
 
 
                 let Statas = enbleData.authentify.status
+                let associationData = []
+                if(barcode.length > 0) {
+                    associationData.push(...barcode)
+                }if(qrcode?.length > 0) {
+                    associationData.push(...qrcode)
+                }if(uhf?.length > 0) {
+                    associationData.push(...uhf)
+                }
                 let enaleObj = {
                     tenantId: tenantData.tenantData[tenantId],
                     userId: userId,
@@ -264,10 +289,7 @@ mongoDb.once('open', async function () {
                     zoneId: zoneId,
                     additionalData:
                     {
-                        association: [
-                            barcode,
-                            qrcode
-                        ],
+                        association: associationData,
                         addInput: inputData,
                         encode: '',
 
@@ -279,7 +301,7 @@ mongoDb.once('open', async function () {
                     primaryURL: url,
                     primaryId: id,
                     primaryIdType: type,
-                    productDescription: '',
+                    productDescription: enbleData?.authentify?.metadata?.product?.description,
                     count: '',
                     chunkIdentifier: '',
                     finalChunk: '',
@@ -305,9 +327,9 @@ mongoDb.once('open', async function () {
                 });
                 filteredData.push(result);
                 duplicatesArray.push(duplicates)
-            })
+            }) 
             console.log(filteredData.length, filteredData[0])
-            let unAssignedTag = await mongoDb.collection("Qa_Authentify").insertMany(filteredData);
+            let unAssignedTag = await mongoDb.collection("Qa_Authentify_test3").insertMany(filteredData);
         } catch (err) {
             console.log("Error in tenant Data ", err)
         }

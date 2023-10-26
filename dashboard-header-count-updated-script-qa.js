@@ -12,7 +12,7 @@ var conn = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "rgbXYZ@9182",
-    database: "smartcosmos_prod1"
+    database: "smartcosmos_qa"
 });
 
 conn.connect(function (err) {
@@ -254,7 +254,7 @@ async function prepairEnablementByProductData(datas, processHashMap, productHash
 
 mongoDb.once('open', async function () {
     //let tenantIdArray = ['b6996074-9aa8-41d7-8a50-32c5f71c6409','ddfbeaf9-40d0-4980-9ef1-a9c72ab44493','cff6c706-9b45-45ff-ba81-614b470bdb38','8a12fdbf-bc44-4722-9695-f390a305d09d','42ed8a64-53c1-4b49-91d3-7bc008336180']
-    let tenantIdArray = ['c2107b22-b02e-45a7-b126-89b65b054ef6']
+    let tenantIdArray = ['cff6c706-9b45-45ff-ba81-614b470bdb38']
     for (const tenantId of tenantIdArray) {
 
         let limit = 500
@@ -264,7 +264,7 @@ mongoDb.once('open', async function () {
         console.log("productHashMap=>",getProcessHashMap)
         while (true) {
             // console.log("New Count", count)
-            let tenantData = await mongoDb.collection('authentify_prod').find({ "tenantId": tenantId , processId:"22174a41-fa5d-4b83-b861-c915c4c50f6f" }).sort({ operationTime: 1 }).skip(count).limit(limit).toArray();
+            let tenantData = await mongoDb.collection('Qa_Authentify').find({ "tenantId": tenantId }).sort({ operationTime: 1 }).skip(count).limit(limit).toArray();
             if (tenantData.length === 0) {
                 await insertIntoMysqlDB(conn,enablementsData, enablementByProcesses, enablementByProducts);
                 enablementsData = []
@@ -276,7 +276,7 @@ mongoDb.once('open', async function () {
 
             // await prepairEnablementsData(tenantData,processHashMap,productHashMap);
             await prepairEnablementByProcessData(tenantData, processHashMap,productHashMap);
-            // await prepairEnablementByProductData(tenantData, processHashMap,productHashMap);
+           await prepairEnablementByProductData(tenantData, processHashMap,productHashMap);
             console.log("Update Data Array For Enablements => ", Object.keys(enablementsData).length)
             console.log("Update Data Array For enablementByProcesses => ", Object.keys(enablementByProcesses).length)
             console.log("Update Data Array For enablementByProducts => ", Object.keys(enablementByProducts).length)
