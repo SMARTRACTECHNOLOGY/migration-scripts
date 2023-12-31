@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 async function Connection(mongoose1) {
 
     try {
-       let url = 'mongodb://sc-loadtesting-solution-cosmosdb:aoiPpe4zDFepOMZ0GJKyPhZrREXSQaKUzPrcwWaSoLQOoVNJ07aDQweNP3q5TE0keellXpqJSfz9ACDbtRxtww==@sc-loadtesting-solution-cosmosdb.mongo.cosmos.azure.com:10255/smartcosmos?ssl=true&replicaSet=globaldb&retrywrites=false';
+       let url = 'mongodb://127.0.0.1:27017/smartcosmos?authSource=admin';
       	 var newProd = mongoose1.createConnection();
         await newProd.openUri(url);
         newProd.on('error', console.error.bind(console, 'connection error:'));
@@ -19,10 +19,10 @@ async function Connection(mongoose1) {
 // creating mysql connection with new production 
 async function newProdMysqlConnection() {
     var conn = mysql.createConnection({
-        host: "loadtesting.mysql.database.azure.com",
-        user: "bksfipnb",
-        password: "A4Yu5BskyaLl3BFaxGJu8Shwf2",
-        database: "smartcosmos"     
+        host: "localhost",
+        user: "root",
+        password: "rgbXYZ@9182",
+        database: "newdb"     
     });
 
     conn.connect((err) => {
@@ -59,9 +59,9 @@ async function getTenantHashMap(mysqlConn) {
 async function batchInsert(connection, data) {
     try {
         console.log("Data Id for Insertion : ",data)
-        let checkBatch = await connection.collection('batches').find({ batchId: data.batchId }).toArray();
+        let checkBatch = await connection.collection('batch').find({ batchId: data.batchId }).toArray();
         if (checkBatch.length == 0) {
-            await connection.collection('batches').insertOne(data);
+            await connection.collection('batch').insertOne(data);
         }
         return true; 
     }
@@ -188,7 +188,7 @@ async function moveData(connection, enablementdata) {
                     count: counts,
                 }
                 
-                updateUnusedHeaderCount(objComm);
+                // updateUnusedHeaderCount(objComm);
                 // removing data from unassignedtagsdatas
                 await batchDelete(connection, batchId)
                 break;
@@ -304,12 +304,16 @@ async function readTags(connection,mysqlConn)
     localCounter=0;
     try
     {
+console.log("script started")
+
         let tenantHasMap=await getTenantHashMap(mysqlConn);
         while(true)
         {
             let responseData = await connection.collection('digitizedtags').find({diId:'E0040100A7C9E339'}).sort({ createdAt: 1 }).allowDiskUse(true).skip(offset).limit(limit).toArray();
-            if(responseData.length==0)
+                    if(responseData.length==0)
             {
+        console.log("logger 1")
+
                 break;
             }
             for (const data of responseData) {
@@ -402,6 +406,8 @@ async function updatingStatus(connection)
     localCounter=0;
     try
     {
+console.log("updating status function")
+
         while(true)
         {
             let responseData = await connection.collection('manufacturertags').find({}).sort({ createdAt: 1 }).allowDiskUse(true).skip(offset).limit(limit).toArray();
@@ -413,7 +419,6 @@ async function updatingStatus(connection)
                 // checking tagId in unassignedtagsdatas
                  
                 let digitizedResponse = await connection.collection('digitizedtags').find({diId:data.tagId, status:'enabled'}).toArray();
-                console.log("Tags Found in Digitized Collection: ",data.tagId , "Response Count=>",digitizedResponse.length)
                 if(digitizedResponse.length>0)
                 {
                     let update= {}

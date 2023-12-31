@@ -1,0 +1,92 @@
+[{
+
+"event":"TAG_READ",
+
+"path":"'/api/v1/Keonnrequest'",
+
+"body":"
+
+var body='{';
+
+body+='\"devid\": \"'+ctx_devid+'\",';
+
+body+='\"devip\": \"'+ctx_devip+'\",';
+
+body+='\"devmac\": \"'+ctx_devmac+'\",';
+
+body+='\"reads\": [';
+
+for(i=0;i<ctx_tags.length;i++)
+
+{
+
+body+='{';
+
+body+='\"epc\": \"'+ctx_tags[i].getEPC()+'\",';
+
+body+='\"sku\": \"'+ctx_tags[i].getSKU()+'\",';
+
+body+='\"serial\": \"'+ctx_tags[i].getSerial()+'\",';
+
+body+='\"tid\": \"'+ctx_tags[i].getTID()+'\",';
+
+body+='\"antenna\": \"'+ctx_tags[i].getAntenna()+'\",';
+
+body+='\"mux1\": \"'+ctx_tags[i].getMux1()+'\",';
+
+body+='\"mux2\": \"'+ctx_tags[i].getMux2()+'\",';
+
+body+='\"uri\": \"'+ctx_tags[i].getURI()+'\",';
+
+body+='\"rssi\": \"'+ctx_tags[i].getRSSI()+'\",';
+
+body+='\"ts\": \"'+ctx_tags[i].getUTC()+'\"';
+
+body+='}';
+
+if(i< ctx_tags.length - 1){
+
+body+=',';
+
+}
+
+}
+
+body+=']';
+
+body+='}';
+
+"
+
+},
+{
+
+    "event":"TAG_ALARM",
+
+    "path":"'/api/v1/Keonnrequest'",
+
+    "body":"
+
+        var body='{';
+
+        body+='\"type\": \"'+ctx_type+'\",';
+
+        body+='\"devid\": \"'+ctx_devid+'\",';
+
+        body+='\"devip\": \"'+ctx_devip+'\",';
+
+        body+='\"devmac\": \"'+ctx_devmac+'\",';
+
+        body+='\"epc\": \"'+ctx_epc+'\",';
+
+        body+='\"sku\": \"'+ctx_sku+'\",';
+
+        body+='\"serial\": \"'+ctx_serial+'\",';
+
+        body+='\"uri\": \"'+ctx_uri+'\"';
+
+        body+='}';
+
+    "
+
+}]

@@ -1,7 +1,7 @@
 var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({ hosts: ['https://vpc-es-enablement-prod-new-d26vsrhl3dcz67u3swbpwxvpnu.eu-west-1.es.amazonaws.com'] });
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://solution-dev-qamongo:HbylJkfMu8lwRwlAHOWqID9SY256BEnBO9Ulj0awumaJ6VETOOr6cAXu2Od6WQjg5QwOQEzI7ZerACDbyvkF0w==@solution-dev-qamongo.mongo.cosmos.azure.com:10255/smartcosmos?ssl=true', { retryWrites: false });
+mongoose.connect('/', { retryWrites: false });
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -33,14 +33,14 @@ db.once('open', function () {
                         "must": [
                             {
                                 "term": {
-                                    "tenantId": "86904681-eaa5-4b9e-aa49-6b6c4959481c"
+                                    "tenantId": "b529be14-2df8-42bd-806d-3a71d5790298"
                                 }
                             },
                             {
                                 "range": {
                                     "lastOperationTimestamp": {
                                         "gte": "2023-01-07T00:00-00:00",
-                                        "lte": "2023-08-23T00:00-00:00"
+                                        "lte": "2023-02-07T00:00-00:00"
                                     }
                                 }
                             }
@@ -74,7 +74,7 @@ db.once('open', function () {
                         finalData.push(enablementData)
                     })
 
-                    db.collection("authentifybackup").insertMany(finalData, function (err, res) {
+                    db.collection("secretLabs_backup").insertMany(finalData, function (err, res) {
                         if (err) throw err;
                         console.log("Inserted Successfully")
                         db.close();

@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 async function newProdConnection(mongoose1) {
 
     try {
-        let url = 'mongodb://127.0.0.1:27017/smartcosmos_prod?authSource=admin';
+        let url = 'mongodb://127.0.0.1:27017/smartcosmos?authSource=admin';
         var newProd = mongoose1.createConnection();
         await newProd.openUri(url);
         newProd.on('error', console.error.bind(console, 'connection error:'));
@@ -19,7 +19,7 @@ async function newProdConnection(mongoose1) {
 // creating connection from current production
 async function currentProdConnection(mongoose2) {
 
-    let url = "mongodb://127.0.0.1:27017/currentProduction?authSource=admin"
+    let url = "mongodb://127.0.0.1:27017/smartcosmos?authSource=admin"
     try {
         var oldProd = mongoose2.createConnection();
         await oldProd.openUri(url);
@@ -40,7 +40,7 @@ async function currentProdConnection(mongoose2) {
 async function getCustomerHashMap(connection, batchId) {
 
     let customerHashMap = new Map();
-    let restData = await connection.collection('CustomerBatch').find({ "batchId": batchId }).toArray();
+    let restData = await connection.collection('customerBatch').find({ "batchId": batchId }).toArray();
     for (const data of restData) {
         // getting customer details
         let customer = await connection.collection('Customer').find({ "customerId": data.customerId }).toArray();
@@ -79,7 +79,7 @@ async function readTagData(currentProdConnection, newProdConnection) {
 
     while (true) {
 
-        let batchData_ = await currentProdConnection.collection('Tag').aggregate([
+        let batchData_ = await currentProdConnection.collection('Tags').aggregate([
             { $sort: { "bId": 1 } },
             { $project: { "bId": 1 } },
             { $group: { "_id": "$bId" } },
@@ -95,6 +95,7 @@ async function readTagData(currentProdConnection, newProdConnection) {
             let batchID = batchData_[i]._id;
            // checking batch id is exist in new collection or not  
            let checkExistingBatchId=await newProdConnection.collection('unassignedtagsdatas').find({batchId: batchID}).toArray();
+           console.log("unassign tags length>>>>>", checkExistingBatchId.length)
            if(checkExistingBatchId.length>0)
             {
                 continue;
@@ -112,7 +113,7 @@ async function readTagData(currentProdConnection, newProdConnection) {
             while (true) {
 
                 let localCounter = 0;
-                let data_ = await currentProdConnection.collection('Tag').find({ "bId": batchID }).sort({ ct: 1 }).skip(offset).limit(limit).toArray();
+                let data_ = await currentProdConnection.collection('Tags').find({ "bId": batchID }).sort({ ct: 1 }).skip(offset).limit(limit).toArray();
                 console.log("Total Record Found For BatchID=>", batchID, "Using Offest ", offset, "Data Found==>", data_.length)
                 if (data_.length === 0) {
                     break;
