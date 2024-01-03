@@ -8,7 +8,7 @@ const uri = 'mongodb://diUser:6A200sj9ZlHjuXZHtIo2@sc-prod-new-di-database.clust
 //var oldDB = mongoose.createConnection(uri, { tlsCAFile: `rds-combined-ca-bundle.pem` });
  var oldDB = mongoose.createConnection();
 // connect to database
- await oldDB.openUri(uri, { tlsCAFile: `rds-combined-ca-bundle.pem` });
+ await oldDB.openUri(uri, { tlsCAFile: `global-bundle.pem` });
 
 oldDB.on('error', console.error.bind(console, 'connection error:'));
 
@@ -18,7 +18,7 @@ oldDB.on('error', console.error.bind(console, 'connection error:'));
 
 var qaDB = mongoose.createConnection();
 // connect to database
-await qaDB.openUri('mongodb://sc-production-solution-cosmosdb:Ez36mJ2V6phUbj9kgSyJPQ0ycQuSbLx0wmVUMQZNqRVNbUlywQHPP01qEKEdNQddWHsxPXxiDirpACDbBFp3YA==@sc-production-solution-cosmosdb.mongo.cosmos.azure.com:10255/smartcosmos?ssl=true&replicaSet=globaldb&retrywrites=false');
+await qaDB.openUri('mongodb://solution-dev-qamongo:HbylJkfMu8lwRwlAHOWqID9SY256BEnBO9Ulj0awumaJ6VETOOr6cAXu2Od6WQjg5QwOQEzI7ZerACDbyvkF0w==@solution-dev-qamongo.mongo.cosmos.azure.com:10255/smartcosmos?ssl=true&retrywrites=false');
 qaDB.on('error', console.error.bind(console, 'connection error:'));
 
 
