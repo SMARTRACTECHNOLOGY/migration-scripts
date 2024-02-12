@@ -15,7 +15,7 @@ oldDB.once('open', async function () {
     console.log(batchIdWithNoTag,"batch id with no tag")
     let costumerdistinctBatchId = await oldDB.collection("CustomerBatch").distinct("batchId")
     console.log(costumerdistinctBatchId, "new costumer distinct batch>>>")
-    let newDistinctBatchIds = await qaDB.collection("uninsertBatch").distinct("batchId")
+    let newDistinctBatchIds = await qaDB.collection("uninsertbatches").distinct("batchId")
  
     //This array will have data of costumer batches
     let remainCostumerBatch = costumerdistinctBatchId.filter(x => !newDistinctBatchIds.includes(x))
@@ -40,10 +40,10 @@ oldDB.once('open', async function () {
         let tagsData1 = await oldDB.collection("Tag").find({ bId: batch }).toArray();
         console.log("TagData", new Date().getTime() - custBT3, tagsData1.length) //1000
         if (tagsData1.length <= 0) {
-            await qaDB.collection("uninsertBatch").insertOne({
-                batchId: batch,
-                tagsLength: tagsData1.length
-            })
+            // await qaDB.collection("uninsertbatches").insertOne({
+            //     batchId: batch,
+            //     tagsLength: tagsData1.length
+            // })
             console.log("BatchId with No Tag data", batchIdWithNoTag.length)
             continue;
         }
@@ -178,9 +178,9 @@ oldDB.once('open', async function () {
                                 batchDataObj.status = digitizedTagData[i].status;
                                 diBulkDataObj = digitizedTagData.slice(i, i + 100)
                                 console.log("Add Data in DI Bulk > 500 >>>>>>>>>>>>>>>>>>>>", bulkDataObj.length)
-                                let manufactureData = await qaDB.collection("manufacturetags1").insertMany(diBulkDataObj);
+                                let manufactureData = await qaDB.collection("manufacturertags").insertMany(diBulkDataObj);
                                 console.log("Insert in Manufacture", manufactureData);
-                                await qaDB.collection("batches1").updateOne({ batchId: batchDataObj.batchId }, { $set: batchDataObj }, { upsert: true })
+                                await qaDB.collection("batches").updateOne({ batchId: batchDataObj.batchId }, { $set: batchDataObj }, { upsert: true })
                                 totalInserted = totalInserted + diBulkDataObj.length
                                 console.log("Tag Inserted  in digitized tags for BatchId ", batch, ct, "out of ", tagsData.length, "and total Inserted", totalInserted);
                                 diBulkDataObj = []
@@ -198,8 +198,8 @@ oldDB.once('open', async function () {
                                     bulkDataObj = unDigitizedTagData.slice(i, i + 100)
                                     console.log("Add Data in Bulk > 500 >>>>>>>>>>>>>>>>>>>>", bulkDataObj.length)
                                     console.log(bulkDataObj.length, "bulkdata before insertion")
-                                    let unAssignedTag = await qaDB.collection("unassignedtags1").insertMany(bulkDataObj);
-                                    await qaDB.collection("unassignedBatch1").updateOne({ batchId: batchDataObj.batchId }, { $set: batchDataObj }, { upsert: true })
+                                    let unAssignedTag = await qaDB.collection("unassignedtagsdatas").insertMany(bulkDataObj);
+                                    await qaDB.collection("unassignedbatches").updateOne({ batchId: batchDataObj.batchId }, { $set: batchDataObj }, { upsert: true })
                                     ct = ct + bulkDataObj.length
                                     totalInserted = totalInserted + bulkDataObj.length
                                     console.log("Tag Inserted  in  Unassignedtags for BatchId ", batch, unAssignedTag.length, "out of ", unDigitizedTagData.length, "and total Inserted", totalInserted);
